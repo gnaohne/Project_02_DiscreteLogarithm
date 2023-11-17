@@ -21,7 +21,6 @@ string binary_to_hex_little_endian(const bitset<MAX_SIZE>& binary);
 bitset<MAX_SIZE> power_mod(const bitset<MAX_SIZE>& x, const bitset<MAX_SIZE>& a, const bitset<MAX_SIZE>& n);
 bitset<MAX_SIZE> mul_mod(const bitset<MAX_SIZE>& x, const bitset<MAX_SIZE>& y, const bitset<MAX_SIZE>& n);
 bitset<MAX_SIZE> modulo(const bitset<MAX_SIZE>& x, const bitset<MAX_SIZE>& n);
-bitset<MAX_SIZE> inverse_mod(const bitset<MAX_SIZE>& s, const bitset<MAX_SIZE>& p);// cal s^-1 in s.s^-1 = 1 (mod p)
 
 int main(int argc, char* argv[])
 {
@@ -379,109 +378,4 @@ bitset<MAX_SIZE> power_mod(const bitset<MAX_SIZE>& x, const bitset<MAX_SIZE>& a,
     }
 
     return result;
-}
-
-bitset<MAX_SIZE> inverse_mod(const bitset<MAX_SIZE>& s, const bitset<MAX_SIZE>& p)
-{
-    // cal s^-1 in s.s^-1 = 1 (mod p)
-    // this algo base on bezout algo: ax + by = gcd(x,y) => s = x, p = y
-
-    bitset<MAX_SIZE> g(1);
-    bitset<MAX_SIZE> temp_p = p;
-    bitset<MAX_SIZE> temp_s = s;
-
-
-    while (temp_s[0] == 0 && temp_p[0] == 0)
-    {
-        temp_s >>= 1;
-        if (temp_s[MAX_SIZE - 2] == 1)
-            temp_s[MAX_SIZE - 1] = 1;
-
-        temp_p >>= 1;
-        if (temp_p[MAX_SIZE - 2] == 1)
-            temp_p[MAX_SIZE - 1] = 1;
-
-        g <<= 1;
-    }
-
-    bitset<MAX_SIZE> u = s; // u = s = x
-    bitset<MAX_SIZE> v = p; // v = p = y
-    bitset<MAX_SIZE> A(1);
-    bitset<MAX_SIZE> B(0);
-    bitset<MAX_SIZE> C(0);
-    bitset<MAX_SIZE> D(1);
-
-    while (u != 0 && u[MAX_SIZE - 1] != 1)
-    {
-        while (u[0] == 0)
-        {
-            u >>= 1;
-            if (u[MAX_SIZE - 2] == 1)
-                u[MAX_SIZE - 1] = 1;
-
-            if (A[0] == 0 && B[0] == 0)
-            {
-                A >>= 1; // A=A/2
-                if (A[MAX_SIZE - 2] == 1)
-                    A[MAX_SIZE - 1] = 1;
-                B >>= 1; // B=B/2
-                if (B[MAX_SIZE - 2] == 1)
-                    B[MAX_SIZE - 1] = 1;
-            }
-            else
-            {
-                A = add_binary(A, temp_p);
-                A >>= 1;
-                if (A[MAX_SIZE - 2] == 1)
-                    A[MAX_SIZE - 1] = 1;
-                B = subtract_binary(B, temp_s);
-                B >>= 1;
-                if (B[MAX_SIZE - 2] == 1)
-                    B[MAX_SIZE - 1] = 1;
-            }
-        }
-
-        while (v[0] == 0)
-        {
-            v >>= 1;
-            if (v[MAX_SIZE - 2] == 1)
-                v[MAX_SIZE - 1] = 1;
-            if (C[0] == 0 && D[0] == 0)
-            {
-                C >>= 1;
-                if (C[MAX_SIZE - 2] == 1)
-                    C[MAX_SIZE - 1] = 1;
-                D >>= 1;
-                if (D[MAX_SIZE - 2] == 1)
-                    D[MAX_SIZE - 1] = 1;
-            }
-            else
-            {
-                C = add_binary(C, temp_p);
-                C >>= 1;
-                if (C[MAX_SIZE - 2] == 1)
-                    C[MAX_SIZE - 1] = 1;
-                D = subtract_binary(D, temp_s);
-                D >>= 1;
-                if (D[MAX_SIZE - 2] == 1)
-                    D[MAX_SIZE - 1] = 1;
-            }
-        }
-
-        if (compare_binary(u, v) == -1)
-        {
-            v = subtract_binary(v, u);
-            C = subtract_binary(C, A);
-            D = subtract_binary(D, B);
-        }
-        else
-        {
-            u = subtract_binary(u, v);
-            A = subtract_binary(A, C);
-            B = subtract_binary(B, D);
-        }
-    }
-    if (C[MAX_SIZE - 1] == 1)
-        C = add_binary(C, p);
-    return C;
 }
