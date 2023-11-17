@@ -10,7 +10,7 @@
 
 using namespace std;
 
-//string input_file_name = "test_08.inp";
+//string input_file_name = "test_19.inp";
 //string output_file_name = "test_00.out";
 
 bitset<4> hex_char_to_bin(char c);
@@ -25,7 +25,7 @@ bitset<MAX_SIZE> div_binary(const bitset<MAX_SIZE>& dividend, const bitset<MAX_S
 
 int main(int argc, char* argv[])
 {
-    auto start = std::chrono::high_resolution_clock::now();
+    //auto start = std::chrono::high_resolution_clock::now();
 
     if (argc != 3)
     {
@@ -49,10 +49,14 @@ int main(int argc, char* argv[])
 
     getline(input_file, p_hex, '\n');
     reverse(p_hex.begin(), p_hex.end());
+    //cout << "p_hex: " << p_hex << endl;
 
     getline(input_file, str_n, '\n');
     reverse(str_n.begin(), str_n.end());
+    //cout << "n_hex: " << str_n << endl;
+
     n = stoi(str_n, nullptr, 16);
+    //cout << "n: " << n << endl;
 
     divisor_hex.resize(n);
     
@@ -60,24 +64,32 @@ int main(int argc, char* argv[])
     {
         input_file >> divisor_hex[i];
         reverse(divisor_hex[i].begin(), divisor_hex[i].end());
+        //cout << "divisor_hex: " << divisor_hex[i] << endl;
     }
 
     getline(input_file, g_hex, '\n');
     getline(input_file, g_hex, '\n');
     reverse(g_hex.begin(), g_hex.end());
-
+    //cout << "g_hex: " << g_hex << endl;
     input_file.close();
 
     bitset<MAX_SIZE> p = hex_str_to_bin(p_hex);
+    //cout << "p: " << p << endl;
+    //cout << "p: " << p.to_ullong() << endl;
+
     bitset<MAX_SIZE> p_1 = subtract_binary(p, bitset<MAX_SIZE>(1));
+    //cout << "p-1: " << p_1.to_ullong() << endl;
     bitset<MAX_SIZE> g = hex_str_to_bin(g_hex);
+    //cout << "g: " << g << endl;
+    //cout << "g: " << g.to_ullong() << endl;
+
     vector<bitset<MAX_SIZE>> divisor;
     divisor.resize(n);
     for (int i = 0; i < n; i++)
     {
         divisor[i] = div_binary(p_1, hex_str_to_bin(divisor_hex[i]));
+        //cout << "divisor: " << divisor[i].to_ullong() << endl;
     }
-        
 
     int flag = 1;
     for (int i = 0; i < n; ++i)
@@ -98,14 +110,17 @@ int main(int argc, char* argv[])
         cout << "Can't open file " << argv[2] << endl;
         return 1;
     }
+    
     output_file << flag;
-    cout << flag << endl;
+    //cout << flag << endl;
     output_file.close();
 
-    auto end = std::chrono::high_resolution_clock::now();
+    /*auto end = std::chrono::high_resolution_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::seconds>(end - start).count();
     cout << "Time: " << duration << " s" << endl;
-	return 0;
+	*/
+
+    return 0;
 }
 
 bitset<4> hex_char_to_bin(char c)
@@ -166,7 +181,7 @@ bitset<MAX_SIZE> add_binary(const bitset<MAX_SIZE>& a, const bitset<MAX_SIZE>& b
 
 int compare_binary(const bitset<MAX_SIZE>& a, const bitset<MAX_SIZE>& b)
 {
-    for (int i = a.size() - 1; i >= 0; --i)
+    for (int i = MAX_SIZE - 2; i >= 0; --i)
     {
         if (a[i] < b[i])
         {
@@ -300,7 +315,7 @@ bitset<MAX_SIZE> div_binary(const bitset<MAX_SIZE>& dividend, const bitset<MAX_S
     {
         if (compare_binary(remainder, divisor_temp) != -1)
         {
-            remainder ^= divisor_temp;
+            remainder = subtract_binary(remainder, divisor_temp);
             quotient.set(difference - i);
         }
         divisor_temp >>= 1;
