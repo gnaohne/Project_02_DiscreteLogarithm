@@ -85,7 +85,7 @@ int main(int argc, char* argv[])
 
     string m_str = binary_to_hex_little_endian(m);
     output_file << m_str;
-    cout << m_str << endl;
+    //cout << m_str << endl;
 
     output_file.close();
 

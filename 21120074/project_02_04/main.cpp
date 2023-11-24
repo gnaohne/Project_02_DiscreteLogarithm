@@ -93,7 +93,7 @@ int main(int argc, char* argv[])
     if (g_m_p != y_r_r_h_p)
         sign = 0;
 
-    cout << sign << endl;
+    //cout << sign << endl;
     output_file << sign << endl;
 
     output_file.close();
